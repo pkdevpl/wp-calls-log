@@ -2,15 +2,14 @@
 
 namespace pkdevpl\wpcallslog;
 
-/* 
+// Run on plugin activation / deactiovation
 
-    In register_post_type() we specify capabilities for editing / reading / deleting post type.
-    By default admin has not been granted those capabilities and we need to add them on plugin
-    activation.
-
-*/
+// Gathers all capabilities registered with 'add-admin-capabilities' filter 
+// and adds / removes them to / from 'administrator' role
 
 if( ! function_exists('set_admin_capabilities') ) {
+
+    // Action = add / remove
     
     function set_admin_capabilities( $action ) {
         

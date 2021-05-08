@@ -18,6 +18,7 @@ define( __NAMESPACE__ . '\PLUGIN_URL', plugin_dir_url( __FILE__ ));
 define( __NAMESPACE__ . '\PLUGIN_PREFIX', 'wpcallslog-');
 
 require_once(PLUGIN_PATH . '/includes/custom-post-types.php');
+require_once(PLUGIN_PATH . '/includes/devices/mb-device-info.php');
 require_once(PLUGIN_PATH . '/includes/functions.php');
 
 if( ! class_exists('WP_Calls_Log') ) :
