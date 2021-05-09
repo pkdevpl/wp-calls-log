@@ -18,6 +18,7 @@ define( __NAMESPACE__ . '\PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 require_once( PLUGIN_PATH . '/includes/devices/class-devices-post-type.php' );
 require_once( PLUGIN_PATH . '/includes/devices/class-devices-info-metabox.php' );
+require_once( PLUGIN_PATH . '/includes/phone-calls/class-phone-calls-post-type.php' );
 require_once( PLUGIN_PATH . '/includes/functions.php' );
 
 class WP_Calls_Log {

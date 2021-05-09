@@ -5,16 +5,12 @@ namespace pkdevpl\wpcallslog;
 class Devices_Post_Type {
 
     function register_actions() {
-        add_action( 'init', [$this, 'register_post_type'] );    
-
+        add_action( 'init', [$this, 'register_post_type'] );
         add_filter( 'manage_pkdevpl_devices_posts_columns', [$this, 'manage_columns'] );
         add_filter( 'manage_edit-pkdevpl_devices_sortable_columns', [$this, 'manage_sortable_columns'] );
         add_action( 'manage_pkdevpl_devices_posts_custom_column', [$this, 'manage_columns_content'], 10, 2 );
-        
         add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2 );
-        
         add_filter( 'pre_get_posts', [$this, 'add_custom_meta_to_search'] );
-        
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
     }
     
@@ -115,17 +111,18 @@ class Devices_Post_Type {
         ];
         
         $args = [
-            'labels'             => $labels,
-            'public'             => false,
-            'publicly_queryable' => false,
-            'show_ui'            => true,
-            'show_in_menu'       => true,
-            'query_var'          => true,
-            'capability_type'    => 'device',
-            'has_archive'        => false,
-            'hierarchical'       => false,
-            'menu_position'      => 5,
-            'supports'           => false,
+            'labels'                => $labels,
+            'public'                => false,
+            'publicly_queryable'    => false,
+            'show_ui'               => true,
+            'show_in_menu'          => true,
+            'query_var'             => true,
+            'capability_type'       => 'device',
+            'has_archive'           => false,
+            'hierarchical'          => false,
+            'menu_position'         => 5,
+            'supports'              => false,
+            'menu_icon'             => 'dashicons-smartphone'
         ];
         
         register_post_type( 'pkdevpl_devices', $args );
