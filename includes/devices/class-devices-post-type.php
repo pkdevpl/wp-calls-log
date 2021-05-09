@@ -5,14 +5,87 @@ namespace pkdevpl\wpcallslog;
 class Devices_Post_Type {
 
     function register_actions() {
-        add_action( 'init', [$this, 'register_post_type'] );        
+        add_action( 'init', [$this, 'register_post_type'] );    
+
         add_filter( 'manage_pkdevpl_devices_posts_columns', [$this, 'manage_columns'] );
         add_filter( 'manage_edit-pkdevpl_devices_sortable_columns', [$this, 'manage_sortable_columns'] );
         add_action( 'manage_pkdevpl_devices_posts_custom_column', [$this, 'manage_columns_content'], 10, 2 );
+        
+        add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2 );
+        
+        add_filter( 'pre_get_posts', [$this, 'add_custom_meta_to_search'] );
+        
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
-        add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2) ;
     }
     
+    function add_admin_capabilities($capability_types) {
+        $capability_types[] = ['device', 'devices'];
+        return $capability_types;
+    }
+
+    function set_post_row_actions( $actions, $post ) {
+        if('pkdevpl_devices' === $post->post_type) {
+            unset($actions['inline hide-if-no-js']);
+        }
+        return $actions;
+    }    
+    
+    function manage_columns($columns) {
+        unset($columns['title']);
+        unset($columns['date']);
+        $columns['device_name'] = 'Nazwa urządzenia';
+        $columns['device_api_key'] = 'Klucz API';
+        return $columns;
+    }
+
+    function manage_sortable_columns($columns) {
+        $columns['device_name'] = 'device_name';
+        $columns['device_api_key'] = 'device_api_key';
+        return $columns;
+    }
+
+    function add_custom_meta_to_search( $wp_query ) {
+		
+        $search_fields = [
+			'pkdevpl_device_name',
+            'pkdevpl_device_api_key'
+        ];
+
+		if( is_admin() && 'pkdevpl_devices' === $wp_query->query['post_type'] ) {
+            
+            $search_term = $wp_query->query_vars['s'];
+            
+            $wp_query->query_vars['s'] = '';
+            
+            if( $search_term !== '' ) {
+                $args = ['relation'=>'OR'];
+                foreach( $search_fields as $field ) {
+                    array_push( $args, [
+                        'key'=>$field,
+                        'value'=>$search_term,
+                        'compare'=>'LIKE'
+                    ]);
+                }
+                $wp_query->set( 'meta_query', $args );
+            }
+        };
+    }
+
+    function manage_columns_content($column, $post_id) {
+        switch($column):
+            case 'device_name':
+                $device_name = get_post_meta( $post_id, 'pkdevpl_device_name', true);
+                echo $device_name;
+                break;
+            case 'device_api_key':
+                $api_key = get_post_meta( $post_id, 'pkdevpl_device_api_key', true);
+                echo $api_key;
+                break;
+            default:
+                echo 'Brak danych';
+        endswitch;        
+    }
+
     function register_post_type() {        
         $labels = [
             'name'                      => 'Urządzenia',
@@ -56,48 +129,6 @@ class Devices_Post_Type {
         ];
         
         register_post_type( 'pkdevpl_devices', $args );
-    }
-    
-    function add_admin_capabilities($capability_types) {
-        $capability_types[] = ['device', 'devices'];
-        return $capability_types;
-    }
-
-    function set_post_row_actions( $actions, $post ) {
-        if('pkdevpl_devices' === $post->post_type) {
-            unset($actions['inline hide-if-no-js']);
-        }
-        return $actions;
-    }
-    
-    
-    function manage_columns($columns) {
-        unset($columns['title']);
-        unset($columns['date']);
-        $columns['device_name'] = 'Nazwa urządzenia';
-        $columns['device_api_key'] = 'Klucz API';
-        return $columns;
-    }
-
-    function manage_sortable_columns($columns) {
-        $columns['device_name'] = 'device_name';
-        $columns['device_api_key'] = 'device_api_key';
-        return $columns;
-    }
-
-    function manage_columns_content($column, $post_id) {
-        switch($column):
-            case 'device_name':
-                $device_name = get_post_meta( $post_id, 'pkdevpl_device_name', true);
-                echo $device_name;
-                break;
-            case 'device_api_key':
-                $api_key = get_post_meta( $post_id, 'pkdevpl_device_api_key', true);
-                echo $api_key;
-                break;
-            default:
-                echo 'Brak danych';
-        endswitch;        
     }
 }
 
