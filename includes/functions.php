@@ -13,7 +13,7 @@ if( ! function_exists('set_admin_capabilities') ) {
     
     function set_admin_capabilities( $action ) {
         
-        $capability_types = apply_filters(PLUGIN_PREFIX . 'add-admin-capabilities', []);
+        $capability_types = apply_filters('pkdevpl_add_admin_capabilities', []);
         
         if(! empty($capability_types) ) {
             
