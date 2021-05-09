@@ -10,6 +10,7 @@ class Devices_Post_Type {
         add_filter( 'manage_edit-pkdevpl_devices_sortable_columns', [$this, 'manage_sortable_columns'] );
         add_action( 'manage_pkdevpl_devices_posts_custom_column', [$this, 'manage_columns_content'], 10, 2 );
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
+        add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2) ;
     }
     
     function register_post_type() {        
@@ -60,6 +61,13 @@ class Devices_Post_Type {
     function add_admin_capabilities($capability_types) {
         $capability_types[] = ['device', 'devices'];
         return $capability_types;
+    }
+
+    function set_post_row_actions( $actions, $post ) {
+        if('pkdevpl_devices' === $post->post_type) {
+            unset($actions['inline hide-if-no-js']);
+        }
+        return $actions;
     }
     
     
