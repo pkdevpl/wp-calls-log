@@ -7,6 +7,7 @@ class Devices_Post_Type {
     function register_actions() {
         add_action( 'init', [$this, 'register_post_type'] );        
         add_filter( 'manage_pkdevpl_devices_posts_columns', [$this, 'manage_columns'] );
+        add_filter( 'manage_edit-pkdevpl_devices_sortable_columns', [$this, 'manage_sortable_columns'] );
         add_action( 'manage_pkdevpl_devices_posts_custom_column', [$this, 'manage_columns_content'], 10, 2 );
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
     }
@@ -67,6 +68,12 @@ class Devices_Post_Type {
         unset($columns['date']);
         $columns['device_name'] = 'Nazwa urządzenia';
         $columns['device_api_key'] = 'Klucz API';
+        return $columns;
+    }
+
+    function manage_sortable_columns($columns) {
+        $columns['device_name'] = 'device_name';
+        $columns['device_api_key'] = 'device_api_key';
         return $columns;
     }
 
