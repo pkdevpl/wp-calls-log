@@ -15,11 +15,11 @@ add_action('add_meta_boxes', function() {
 });
 
 add_action('save_post', function( $post_id ) {
-    $device_name =  sanitize_text_field( $_POST['device_name'] );
-    $api_key =      sanitize_text_field( $_POST['api_key'] );
+    $device_name =      sanitize_text_field( $_POST['device_name'] );
+    $device_api_key =    sanitize_text_field( $_POST['device_api_key'] );
     
     update_post_meta( $post_id, PLUGIN_PREFIX . 'device_name', $device_name );
-    update_post_meta( $post_id, PLUGIN_PREFIX . 'api_key', $api_key );
+    update_post_meta( $post_id, PLUGIN_PREFIX . 'device_api_key', $device_api_key );
 });
 
 if( ! function_exists( 'print_device_info_metabox' )) {
@@ -34,8 +34,8 @@ if( ! function_exists( 'print_device_info_metabox' )) {
             $device_name = $post_meta[PLUGIN_PREFIX . 'device_name'][0];
         }
 
-        if(!empty($post_meta[PLUGIN_PREFIX . 'api_key'][0])) {
-            $api_key = $post_meta[PLUGIN_PREFIX . 'api_key'][0];
+        if(!empty($post_meta[PLUGIN_PREFIX . 'device_api_key'][0])) {
+            $api_key = $post_meta[PLUGIN_PREFIX . 'device_api_key'][0];
         }
     ?>
         <table class="form-table">
@@ -53,7 +53,8 @@ if( ! function_exists( 'print_device_info_metabox' )) {
                     <label for="device_name">Klucz API</label>
                 </th>
                 <td>
-                    <input type="text" name="device_api_key" id="device_api_key" disabled value="<?= $api_key ?>" style="background-color: #efefef; border-color: #efefef; color: #000"/>
+                    <input type="text" disabled value="<?= $api_key ?>" style="background-color: #efefef; border-color: #efefef; color: #000; cursor: text"/>
+                    <input type="hidden" name="device_api_key" id="device_api_key" value="<?= $api_key ?>" />
                 </td>
             </tr>
         </table>

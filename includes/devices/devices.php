@@ -2,7 +2,7 @@
 
 namespace pkdevpl\wpcallslog;
 
-// Devices post type
+// Register devices post type
 
 add_action( 'init', function() {
     
@@ -19,7 +19,7 @@ add_action( 'init', function() {
         'all_items'                 =>'Wszystkie urządzenia',
         'search_items'              =>'Wyszukaj urządzenia',
         'parent_item_colon'         =>'Nadrzędne urządzenie',
-        'not_found'                 =>'Nie znaleziono',
+        'not_found'                 =>'Nie znaleziono urządzeń',
         'not_found_in_trash'        =>'Nie znaleziono w koszu',
         'featured_image'            =>'Miniaturka',
         'set_featured_image'        =>'Ustaw miniaturkę',
@@ -50,7 +50,38 @@ add_action( 'init', function() {
     register_post_type( PLUGIN_PREFIX . 'devices', $args );
 });
 
+
+
+// Add post type capabilities to admin role
+
 add_filter(PLUGIN_PREFIX . 'add-admin-capabilities', function($capability_types) {
     $capability_types[] = ['device', 'devices'];
     return $capability_types;
 });
+
+
+
+// Add custom columns to devices posts table
+
+add_filter('manage_' . PLUGIN_PREFIX . 'devices_posts_columns', function($columns) {
+    unset($columns['title']);
+    unset($columns['date']);
+    $columns['device_name'] = 'Nazwa urządzenia';
+    $columns['device_api_key'] = 'Klucz API';
+    return $columns;
+});
+
+add_action('manage_' . PLUGIN_PREFIX . 'devices_posts_custom_column', function($column, $post_id) {
+    switch($column):
+        case 'device_name':
+            $device_name = get_post_meta( $post_id, PLUGIN_PREFIX . 'device_name', true);
+            echo $device_name;
+            break;
+        case 'device_api_key':
+            $api_key = get_post_meta( $post_id, PLUGIN_PREFIX . 'device_api_key', true);
+            echo $api_key;
+            break;
+        default:
+            echo 'Brak danych';
+    endswitch;        
+}, 10, 2);
