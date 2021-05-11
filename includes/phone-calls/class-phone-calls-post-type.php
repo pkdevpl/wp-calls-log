@@ -13,6 +13,7 @@ class Phone_Calls_Post_Type {
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
         add_action( 'admin_footer', [$this, 'remove_add_new_button'] );
         add_action( 'admin_init', array( $this, 'remove_admin_pages' ) );
+        add_filter( 'pre_get_posts', [$this, 'add_custom_meta_to_search'] );
     }
     
     function add_admin_capabilities($capability_types) {
@@ -45,6 +46,53 @@ class Phone_Calls_Post_Type {
         $columns['phone_call_device'] = 'phone_call_device';
         return $columns;
     }
+    
+    function add_custom_meta_to_search( $wp_query ) {
+        
+        if( is_admin() && 'pkdevpl_phone_calls' === $wp_query->query['post_type'] ) {
+            
+            $search_term = $wp_query->query_vars['s'];
+            
+            if( $search_term !== '' ) {
+                
+                $phone_calls = new Phone_Calls;
+                $devices = new Devices;
+                
+                $search_number = $phone_calls->format_phone_number($search_term);
+                $search_device = $devices->search_device($search_term);
+                
+                // show_pre( $seatch_device ); die;
+                
+                $args = ['relation'=>'OR'];
+                
+                if(! is_wp_error($search_number) ) {
+                    $args[] = [
+                        'key'=>'pkdevpl_phone_call_incoming_number',
+                        'value'=>$search_number,
+                        'compare'=>'LIKE'
+                    ];
+                    $args[] = [
+                        'key'=>'pkdevpl_phone_call_receiving_number',
+                        'value'=>$search_number,
+                        'compare'=>'LIKE'
+                    ];
+                }
+                
+                if( $search_device !== null ) {
+                    $args[] = [
+                        'key'=>'pkdevpl_phone_call_device_wp_id',
+                        'value'=>$search_device->ID,
+                        'compare'=>'='
+                    ];
+                }
+
+                if( count( $args ) > 1 ) {
+                    $wp_query->query_vars['s'] = '';
+                    $wp_query->set( 'meta_query', $args );
+                }
+            }
+        };
+    }
 
     /**
      * Removes Add New button from post type screen
@@ -72,8 +120,6 @@ class Phone_Calls_Post_Type {
      */
     
     function remove_admin_pages() {
-
-        // Removes 'add new phone call' and 'all phone calls' subpages from admin menu, leaving only top level page.
 
         $parent_slug = 'edit.php?post_type=pkdevpl_phone_calls';
         $page_slug = 'post-new.php?post_type=pkdevpl_phone_calls';

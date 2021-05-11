@@ -67,7 +67,7 @@ class Phone_Calls {
     }
 
     /**
-     * Accepts phone number string and returns formatted string ex. +48789123456
+     * Accepts phone number string and returns formatted string or WP_Error ex. +48789123456
      * 
      * @param   $phone_number   string      Phone number string
      * @param   $format     string|null     Optional. Can be 'add-spaces' or null.
