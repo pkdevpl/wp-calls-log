@@ -69,14 +69,19 @@ class Phone_Calls {
     /**
      * Accepts phone number string and returns formatted string ex. +48789123456
      * 
-     * @param   $phone_number   string  Phone number string
+     * @param   $phone_number   string      Phone number string
+     * @param   $format     string|null     Optional. Can be 'add-spaces' or null.
      * @return  string  ex. +48789123456
      */
 
-    function format_phone_number($phone_number) {
+    function format_phone_number($phone_number, $format = null) {
         
         $phone_util = PhoneNumberUtil::getInstance();
-        $format = PhoneNumberFormat::E164;
+        if( 'add-spaces' === $format ) {
+            $format = PhoneNumberFormat::INTERNATIONAL;
+        } else {
+            $format = PhoneNumberFormat::E164;
+        }
 
         try {
             $phone_base_number = $phone_util->parse($phone_number, 'PL');
