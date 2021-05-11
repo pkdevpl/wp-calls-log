@@ -63,7 +63,4 @@ class Devices_Info_Metabox {
 
 }
 
-$devices_info_metabox = new Devices_Info_Metabox();
-$devices_info_metabox->register_actions();
-
 

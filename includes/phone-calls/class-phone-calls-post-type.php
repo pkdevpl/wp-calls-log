@@ -95,6 +95,3 @@ class Phone_Calls_Post_Type {
         register_post_type( 'pkdevpl_phone_calls', $args );
     }
 }
-
-$phone_calls_post_type = new Phone_Calls_Post_Type();
-$phone_calls_post_type->register_actions();

@@ -128,6 +128,3 @@ class Devices_Post_Type {
         register_post_type( 'pkdevpl_devices', $args );
     }
 }
-
-$devices_post_type = new Devices_Post_Type();
-$devices_post_type->register_actions();
