@@ -8,6 +8,7 @@ class Phone_Calls_Post_Type {
         add_action( 'init', [$this, 'register_post_type'] );    
         add_filter( 'manage_pkdevpl_phone_calls_posts_columns', [$this, 'manage_columns'] );
         add_filter( 'manage_edit-pkdevpl_phone_calls_sortable_columns', [$this, 'manage_sortable_columns'] );
+        add_action( 'manage_pkdevpl_phone_calls_posts_custom_column', [$this, 'manage_columns_content'], 10, 2 );
         add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2 );        
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
     }
@@ -44,6 +45,32 @@ class Phone_Calls_Post_Type {
 
     function manage_columns_content($column, $post_id) {
         switch($column):
+            case 'phone_call_time':
+                $call_time = get_post_meta($post_id, 'pkdevpl_phone_call_time', true);
+                echo wp_date( 'd.m.Y H:i', $call_time);
+            break;
+            case 'phone_call_from':
+                $call_from = get_post_meta($post_id, 'pkdevpl_phone_call_incoming_number', true);
+                $phone_calls = new Phone_Calls;
+                $formatted = $phone_calls->format_phone_number($call_from, 'add-spaces');
+                echo apply_filters( 'pkdevpl_incoming_call_number_column', $formatted, $call_from, $post_id );
+            break;
+            case 'phone_call_to':
+                $call_to = get_post_meta($post_id, 'pkdevpl_phone_call_receiving_number', true);
+                $phone_calls = new Phone_Calls;
+                $formatted = $phone_calls->format_phone_number($call_to, 'add-spaces');
+                echo apply_filters( 'pkdevpl_receiving_call_number_column', $formatted, $call_to, $post_id );
+            break;
+            case 'phone_call_device':
+                $device_id = get_post_meta($post_id, 'pkdevpl_phone_call_device_wp_id', true);
+                $devices = new Devices;
+                $device = $devices->get_device($device_id);
+                if( null !== $device ) {
+                    echo apply_filters( 'pkdevpl_receiving_call_number_column', $device->name, $device, $post_id );
+                } else {
+                    echo 'Nieznane urządzenie';
+                }
+            break;
             default:
                 echo 'Brak danych';
         endswitch;        
