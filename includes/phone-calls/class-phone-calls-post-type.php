@@ -12,6 +12,7 @@ class Phone_Calls_Post_Type {
         add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2 );        
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
         add_action( 'admin_footer', [$this, 'remove_add_new_button'] );
+        add_action( 'admin_init', array( $this, 'remove_admin_pages' ) );
     }
     
     function add_admin_capabilities($capability_types) {
@@ -64,6 +65,24 @@ class Phone_Calls_Post_Type {
 				}
 			</style>
 		<?php }
+    }
+
+    /**
+     * Removes unnecessary pages from admin menu
+     */
+    
+    function remove_admin_pages() {
+
+        // Removes 'add new phone call' and 'all phone calls' subpages from admin menu, leaving only top level page.
+
+        $parent_slug = 'edit.php?post_type=pkdevpl_phone_calls';
+        $page_slug = 'post-new.php?post_type=pkdevpl_phone_calls';
+        
+        remove_submenu_page( $parent_slug, $page_slug );
+        
+        $page_slug = 'edit.php?post_type=pkdevpl_phone_calls';
+        
+        remove_submenu_page( $parent_slug, $page_slug );
     }
 
     function manage_columns_content($column, $post_id) {
