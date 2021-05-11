@@ -11,6 +11,7 @@ class Phone_Calls_Post_Type {
         add_action( 'manage_pkdevpl_phone_calls_posts_custom_column', [$this, 'manage_columns_content'], 10, 2 );
         add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2 );        
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
+        add_action( 'admin_footer', [$this, 'remove_add_new_button'] );
     }
     
     function add_admin_capabilities($capability_types) {
@@ -21,6 +22,7 @@ class Phone_Calls_Post_Type {
     function set_post_row_actions( $actions, $post ) {
         if('pkdevpl_phone_calls' === $post->post_type) {
             unset($actions['inline hide-if-no-js']);
+            unset($actions['edit']);
         }
         return $actions;
     }    
@@ -41,6 +43,27 @@ class Phone_Calls_Post_Type {
         $columns['phone_call_to'] = 'phone_call_to';
         $columns['phone_call_device'] = 'phone_call_device';
         return $columns;
+    }
+
+    /**
+     * Removes Add New button from post type screen
+     * 
+     * Adds <style> tag that makes Add New button invisible for edit-post_type and single post_type screens in admin
+     */
+    
+    function remove_add_new_button() {
+        $screens = [
+            'edit-pkdevpl_phone_calls',
+            'pkdevpl_phone_calls'
+        ];
+		$screen = get_current_screen();
+		if( in_array( $screen->id, $screens ) ) { ?>
+			<style>
+				.wp-heading-inline+.page-title-action:first-of-type {
+					display: none;
+				}
+			</style>
+		<?php }
     }
 
     function manage_columns_content($column, $post_id) {
