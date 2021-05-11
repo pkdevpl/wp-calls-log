@@ -66,4 +66,40 @@ class Devices {
             return null;
         }
     }
+
+    /**
+     * Searches device by name or api_key and returns Device object or null
+     * 
+     * @param   $search_string  string  Name of device or api key
+     * @return  Device|null
+    */
+
+    function search_device( $search_string ) {
+        $args = [
+            'post_type'=>'pkdevpl_devices',
+            'post_status'=>'publish',
+            'posts_per_page'=>1,
+            'meta_query'=>[
+                'relation'=>'OR',
+                [
+                    'key'=>'pkdevpl_device_name',
+                    'value'=>$search_string,
+                    'compare'=>'LIKE'
+                ],[
+                    'key'=>'pkdevpl_device_api_key',
+                    'value'=>$search_string,
+                    'compare'=>'LIKE'
+                ],
+            ],
+        ];
+
+        $query = new WP_Query( $args );
+
+        if( $query->have_posts() ) {
+            $device = $this->get_device($query->posts[0]);
+            return $device;
+        } else {
+            return null;
+        }
+    }
 }
