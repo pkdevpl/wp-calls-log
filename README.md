@@ -6,7 +6,7 @@ Wordpress plugin that registers incoming phone calls from Android phone device. 
 
 ## Installation
 
-Download plugin `.zip` file from this repository and install plugin in your wordpress admin.  
+Download plugin `.zip` file (3 588 kB) from this repository and install plugin in your wordpress admin.  
 
 Go to `Urządzenia` page and click `Dodaj urządzenie` to add new device (phone).
 
