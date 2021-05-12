@@ -22,6 +22,7 @@ require_once( PLUGIN_PATH . '/includes/devices/class-devices-post-type.php' );
 require_once( PLUGIN_PATH . '/includes/devices/class-devices-info-metabox.php' );
 require_once( PLUGIN_PATH . '/includes/devices/class-devices.php' );
 require_once( PLUGIN_PATH . '/includes/devices/class-device.php' );
+require_once( PLUGIN_PATH . '/includes/devices/class-xml-generator.php' );
 
 require_once( PLUGIN_PATH . '/includes/phone-calls/class-phone-calls-post-type.php' );
 require_once( PLUGIN_PATH . '/includes/phone-calls/class-phone-calls-rest.php' );
@@ -50,7 +51,11 @@ class WP_Calls_Log {
         
         $phone_calls_rest = new Phone_Calls_REST();
         $phone_calls_rest->register_actions();
-        
+
+        add_filter( 'jwt_auth_whitelist', function( $endpoints ) {
+            $endpoints[] = '/wp-json/wpcl/v1/incoming_call';
+            return $endpoints;
+        });
 
     }
     

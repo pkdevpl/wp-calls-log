@@ -23,16 +23,11 @@ class Phone_Calls {
      * @return  int|WP_Error    Returns new post_id or WP_Error
      */
     
-    function register_phone_call( $incoming_number, $receiving_number, $device_id ) {
+    function register_phone_call( $incoming_number, $device_id ) {
         
         $number_from = $this->format_phone_number($incoming_number);
         if(is_wp_error( $number_from )) {
             return new WP_Error('wpcl_invalid_incoming_number', 'Incoming number is not a valid number');
-        }
-
-        $number_to = $this->format_phone_number($receiving_number);
-        if(is_wp_error( $number_to )) {
-            return new WP_Error('wpcl_invalid_receiving_number', 'Receiving number is not a valid number');
         }
 
         $devices = new Devices;
@@ -52,9 +47,8 @@ class Phone_Calls {
             'post_content'=>'empty',
             'meta_input'=>[
                 'pkdevpl_phone_call_incoming_number'=>$number_from,
-                'pkdevpl_phone_call_receiving_number'=>$number_to,
                 'pkdevpl_phone_call_device_wp_id'=>$device->ID,
-                'pkdevpl_phone_call_time'=>current_time('timestamp'),
+                'pkdevpl_phone_call_time'=>time()
             ],
         ];
         

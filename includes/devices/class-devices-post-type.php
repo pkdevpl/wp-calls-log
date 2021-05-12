@@ -12,6 +12,7 @@ class Devices_Post_Type {
         add_filter( 'post_row_actions', [$this, 'set_post_row_actions'], 10, 2 );
         add_filter( 'pre_get_posts', [$this, 'add_custom_meta_to_search'] );
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
+        add_action( 'admin_post_get_tasker_xml', [$this, 'generate_tasker_profile_xml'] );
     }
     
     function add_admin_capabilities($capability_types) {
@@ -20,8 +21,20 @@ class Devices_Post_Type {
     }
 
     function set_post_row_actions( $actions, $post ) {
+        
         if('pkdevpl_devices' === $post->post_type) {
+            $devices = new Devices;
+            $device = $devices->get_device($post->ID);
+
+            $xml_action_url = admin_url( 'admin-post.php' ) . '?action=get_tasker_xml&device_api_key=' . $device->api_key;
+            $xml_action_url = wp_nonce_url( $xml_action_url, 'generate_xml' );
+        
+            $actions_before = [
+                'get-tasker-xml'=>'<a href="' . $xml_action_url . '" target="_blank" title="Pobierz plik XML z konfiguracją profilu tasker dla tego urządzenia">Pobierz profil Tasker</a>'
+            ];
+        
             unset($actions['inline hide-if-no-js']);
+            $actions = array_merge($actions_before, $actions);
         }
         return $actions;
     }    
@@ -80,6 +93,24 @@ class Devices_Post_Type {
             default:
                 echo 'Brak danych';
         endswitch;        
+    }
+
+    function generate_tasker_profile_xml() {
+
+        $location = admin_url('edit.php?post_type=pkdevpl_devices');
+
+        $is_nonce_correct = check_admin_referer( 'generate_xml' );
+        
+        if( ! $is_nonce_correct ) wp_redirect( $location );
+        
+        $device_api_key = $_GET['device_api_key'];
+
+        $devices = new Devices;
+        $device = $devices->get_device_by_api_key($device_api_key);
+
+        if( is_wp_error( $device ) || is_null( $device ) ) wp_redirect( $location );
+
+        $xml = new XML_Generator( $device->api_key );
     }
 
     function register_post_type() {        

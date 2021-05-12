@@ -21,7 +21,8 @@ class Phone_Calls_REST {
         $route = '/incoming_call';
         $endpoint = [
             'methods'=>'POST',
-            'callback'=>[$this, 'handle_incoming_call']
+            'callback'=>[$this, 'handle_incoming_call'],
+            'permission_callback' => '__return_true',
         ];
 
         register_rest_route( $namespace, $route, $endpoint );
@@ -34,6 +35,8 @@ class Phone_Calls_REST {
     function handle_incoming_call( WP_REST_Request $request ) {
 
         $response = [
+            'success'=>false,
+            'statusCode'=>400,
             'code'=>'wpcl_request_completed',
             'message'=>'Request was completed',
             'data'=>null
@@ -46,7 +49,7 @@ class Phone_Calls_REST {
         if( is_null( $api_key ) ) {
             $response['code'] = 'wpcl_api_key_null';
             $response['message'] = 'You need to provide \'api_key\' parameter';
-            return new WP_REST_Response($response, 400);
+            return new WP_REST_Response($response);
         }
         
         // Check if incoming_number is provided
@@ -56,35 +59,27 @@ class Phone_Calls_REST {
         if( is_null( $number_from ) ) {
             $response['code'] = 'wpcl_incoming_number_null';
             $response['message'] = 'You need to provide \'incoming_number\' parameter';
-            return new WP_REST_Response($response, 400);
-        }
-        
-        // Check if receiving_number is provided
-        
-        $number_to = $request->get_param('receiving_number');
-
-        if( is_null( $number_to ) ) {
-            $response['code'] = 'wpcl_receiving_number_null';
-            $response['message'] = 'You need to provide \'receiving_number\' parameter';
-            return new WP_REST_Response($response, 400);
+            return new WP_REST_Response($response);
         }
 
         // Register phone call and handle errors
 
         $phone_calls = new Phone_Calls();
-        $post_id = $phone_calls->register_phone_call($number_from, $number_to, $api_key);
+        $post_id = $phone_calls->register_phone_call($number_from, $api_key);
 
         if( is_wp_error( $post_id ) ) {
             $response['code'] = $post_id->get_error_code();
             $response['message'] = $post_id->get_error_message();
-            return new WP_REST_Response($response, 400);
+            return new WP_REST_Response($response);
         }
 
+        $response['success'] = true;
+        $response['statusCode'] = 200;
         $response['code'] = 'wpcl_phone_call_registered';
         $response['message'] = 'Phone call was registered in database';
         $response['data'] = ['post_id'=>$post_id];
 
-        return new WP_REST_Response($response, 200);
+        return new WP_REST_Response($response);
         
     }
 
