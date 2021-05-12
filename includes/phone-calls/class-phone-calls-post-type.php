@@ -48,7 +48,6 @@ class Phone_Calls_Post_Type {
         unset($columns['date']);
         $columns['phone_call_time'] = 'Data połączenia';
         $columns['phone_call_from'] = 'Od';
-        $columns['phone_call_to'] = 'Do';
         $columns['phone_call_device'] = 'Urządzenie';
         return $columns;
     }
@@ -56,7 +55,6 @@ class Phone_Calls_Post_Type {
     function manage_sortable_columns($columns) {
         $columns['phone_call_time'] = 'phone_call_time';
         $columns['phone_call_from'] = 'phone_call_from';
-        $columns['phone_call_to'] = 'phone_call_to';
         $columns['phone_call_device'] = 'phone_call_device';
         return $columns;
     }
@@ -173,16 +171,6 @@ class Phone_Calls_Post_Type {
                     $phone_calls = new Phone_Calls;
                     $formatted = $phone_calls->format_phone_number($call_from, 'add-spaces');
                     echo apply_filters( 'pkdevpl_incoming_call_number_column', $formatted, $call_from, $post_id );
-                } else {
-                    echo 'Brak danych';
-                }
-            break;
-            case 'phone_call_to':
-                $call_to = get_post_meta($post_id, 'pkdevpl_phone_call_receiving_number', true);
-                if( $call_to ) {
-                    $phone_calls = new Phone_Calls;
-                    $formatted = $phone_calls->format_phone_number($call_to, 'add-spaces');
-                    echo apply_filters( 'pkdevpl_receiving_call_number_column', $formatted, $call_to, $post_id );
                 } else {
                     echo 'Brak danych';
                 }
