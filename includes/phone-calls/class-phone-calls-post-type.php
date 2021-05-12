@@ -2,6 +2,10 @@
 
 namespace pkdevpl\wpcallslog;
 
+/**
+ * Class adds pkdevpl_phone_calls post type related actions
+ */
+
 class Phone_Calls_Post_Type {
 
     function register_actions() {
@@ -14,7 +18,17 @@ class Phone_Calls_Post_Type {
         add_action( 'admin_footer', [$this, 'remove_add_new_button'] );
         add_action( 'admin_init', array( $this, 'remove_admin_pages' ) );
         add_filter( 'pre_get_posts', [$this, 'add_custom_meta_to_search'] );
-    }
+    }    
+
+    /**
+     * Callback for 'pkdevpl_add_admin_capabilities' filter
+     * 
+     * Filter is used in function set_admin_capabilities run on plugin activation / deactivation. It gives / removes 
+     * capabilities to edit / create / update this specific post type posts. Without it administrator won't see
+     * post type page in admin menu.
+     * 
+     * @param Array $capability_types  Contains capability types defined in register_post_type $args['capability_type']. Usually it's 'post' but for specific post types it might be something else, like 'book' or ['book', 'books']
+     */
     
     function add_admin_capabilities($capability_types) {
         $capability_types[] = 'phone_call';
@@ -46,6 +60,12 @@ class Phone_Calls_Post_Type {
         $columns['phone_call_device'] = 'phone_call_device';
         return $columns;
     }
+
+    /**
+     * Extends WP_Query search for phone calls to include phone call meta fields
+     * 
+     * @param WP_Query $wp_query    WP_Query object containig search string and other parameters
+     */
     
     function add_custom_meta_to_search( $wp_query ) {
         
@@ -58,12 +78,17 @@ class Phone_Calls_Post_Type {
                 $phone_calls = new Phone_Calls;
                 $devices = new Devices;
                 
+                // If user provided phone number, convert it to match format stored in db
+                
                 $search_number = $phone_calls->format_phone_number($search_term);
+
+                // If user provided device name, find the device first, to get it's post ID
+
                 $search_device = $devices->search_device($search_term);
                 
-                // show_pre( $seatch_device ); die;
-                
                 $args = ['relation'=>'OR'];
+
+                // If number is valid, add meta field to wp_query
                 
                 if(! is_wp_error($search_number) ) {
                     $args[] = [
@@ -71,12 +96,9 @@ class Phone_Calls_Post_Type {
                         'value'=>$search_number,
                         'compare'=>'LIKE'
                     ];
-                    $args[] = [
-                        'key'=>'pkdevpl_phone_call_receiving_number',
-                        'value'=>$search_number,
-                        'compare'=>'LIKE'
-                    ];
                 }
+
+                // If device was found, add it's ID to wp_query
                 
                 if( $search_device !== null ) {
                     $args[] = [
@@ -85,6 +107,8 @@ class Phone_Calls_Post_Type {
                         'compare'=>'='
                     ];
                 }
+
+                // If no device / number was found, don't add anything to wp_query
 
                 if( count( $args ) > 1 ) {
                     $wp_query->query_vars['s'] = '';
@@ -117,6 +141,8 @@ class Phone_Calls_Post_Type {
 
     /**
      * Removes unnecessary pages from admin menu
+     * 
+     * Removes 'add new phone call' and 'all phone calls' subpages from admin menu. Leaves top-level 'Phone calls' menu
      */
     
     function remove_admin_pages() {

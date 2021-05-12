@@ -52,11 +52,6 @@ class WP_Calls_Log {
         $phone_calls_rest = new Phone_Calls_REST();
         $phone_calls_rest->register_actions();
 
-        add_filter( 'jwt_auth_whitelist', function( $endpoints ) {
-            $endpoints[] = '/wp-json/wpcl/v1/incoming_call';
-            return $endpoints;
-        });
-
     }
     
     function activate() {

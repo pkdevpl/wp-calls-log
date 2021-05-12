@@ -6,10 +6,15 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
+/**
+ * Adds REST routes to register phone calls
+ */
+
 class Phone_Calls_REST {
 
     function register_actions() {
         add_action( 'rest_api_init', [$this, 'add_rest_routes'] );
+        add_filter( 'jwt_auth_whitelist', [$this, 'whitelist_route'] );
     }
 
     /**
@@ -29,7 +34,22 @@ class Phone_Calls_REST {
     }
 
     /**
+     * Adds REST route to whitelist in case we use JWT_Auth plugin
+     * 
+     * @param Array $routes  List of whitelisted routes
+     * 
+     * @return Array New list of whitelisted routes
+     */
+
+    function whitelist_route( $routes ) {
+        $routes[] = '/wp-json/wpcl/v1/incoming_call';
+        return $routes;
+    }
+
+    /**
      * Checks parameters for incoming call route and registers new phone call in database
+     * 
+     * @param WP_REST_Request $request  Represents HTTP request
      */
 
     function handle_incoming_call( WP_REST_Request $request ) {

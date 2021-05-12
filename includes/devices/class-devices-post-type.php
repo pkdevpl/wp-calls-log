@@ -2,6 +2,10 @@
 
 namespace pkdevpl\wpcallslog;
 
+/**
+ * Class adds pkdevpl_devices post type and actions related to that post type
+ */
+
 class Devices_Post_Type {
 
     function register_actions() {
@@ -14,6 +18,16 @@ class Devices_Post_Type {
         add_filter( 'pkdevpl_add_admin_capabilities', [$this, 'add_admin_capabilities'] );
         add_action( 'admin_post_get_tasker_xml', [$this, 'generate_tasker_profile_xml'] );
     }
+
+    /**
+     * Callback for 'pkdevpl_add_admin_capabilities' filter
+     * 
+     * Filter is used in function set_admin_capabilities run on plugin activation / deactivation. It gives / removes 
+     * capabilities to edit / create / update this specific post type posts. Without it administrator won't see
+     * post type page in admin menu.
+     * 
+     * @param Array $capability_types  Contains capability types defined in register_post_type $args['capability_type']. Usually it's 'post' but for specific post types it might be something else, like 'book' or ['book', 'books']
+     */
     
     function add_admin_capabilities($capability_types) {
         $capability_types[] = ['device', 'devices'];
@@ -94,6 +108,12 @@ class Devices_Post_Type {
                 echo 'Brak danych';
         endswitch;        
     }
+
+    /**
+     * Callback for admin_post action get_tasker_xml
+     * 
+     * It is run by url admin-post.php?action=get_tasker_xml&device_api_key=XXX and should be nonced with 'generate_xml' action.
+     */
 
     function generate_tasker_profile_xml() {
 

@@ -10,8 +10,8 @@ class Devices {
     /**
      * Gets Device object by post_id or post object
      * 
-     * @param   $post   WP_Post|int
-     * @return  Device|null
+     * @param WP_Post|int $post You can provide either post object or post_id
+     * @return Device|null If device is not found returns null.
      */
 
     function get_device( $post ) {

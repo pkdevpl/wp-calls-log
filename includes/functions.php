@@ -2,10 +2,15 @@
 
 namespace pkdevpl\wpcallslog;
 
-// Run on plugin activation / deactiovation
-
-// Gathers all capabilities registered with 'add-admin-capabilities' filter 
-// and adds / removes them to / from 'administrator' role
+/**
+ * Sets capabilities for custom post types to administrator role on plugin activation / deactivation
+ * 
+ * Uses filter pkdevpl_add_admin_capabilities to gather all capability types for post types and gives 
+ * access to editing, reading and managing posts. It is required to let admin see custom post types
+ * in admin after registration.
+ * 
+ * @param string $action    Accepts 'add' and 'remove'.
+ */
 
 if( ! function_exists('set_admin_capabilities') ) {
 
@@ -41,6 +46,12 @@ if( ! function_exists('set_admin_capabilities') ) {
         }
     }
 }
+
+/**
+ * Makes it easier to display objects and arrays. Used mainly in development to print data for debugging
+ * 
+ * @param Array|Object|String $content  Anything that can be displayed with print_r
+ */
 
 if( ! function_exists('show_pre')) {
     function show_pre($content) {

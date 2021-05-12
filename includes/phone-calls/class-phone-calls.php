@@ -14,13 +14,14 @@ use WP_Error;
 class Phone_Calls {
 
     /**
-     * Adds phone call as a WP_Post to wp_posts table
+     * Adds phone call to wp_posts table
      * 
-     * @param   $incoming_number    string  Caller Phone ID
-     * @param   $receiving_number   string  Caller ID of phone receiving call (in case of dual-sim)
-     * @param   $device             post_id | api_key
+     * Creates new post of pkdevpl_phone_call post type and stores it's metadata.
      * 
-     * @return  int|WP_Error    Returns new post_id or WP_Error
+     * @param string $incoming_number   Caller Phone ID
+     * @param int|string $device        Int representing post_id or string containing device_api_key
+     * 
+     * @return int|WP_Error Returns post_id of created phone call post or WP_Error
      */
     
     function register_phone_call( $incoming_number, $device_id ) {
@@ -29,6 +30,8 @@ class Phone_Calls {
         if(is_wp_error( $number_from )) {
             return new WP_Error('wpcl_invalid_incoming_number', 'Incoming number is not a valid number');
         }
+
+        // Get device by post_id or device_api_key
 
         $devices = new Devices;
         if( is_int( $device_id ) || $device_id instanceof WP_Post ) {
@@ -61,11 +64,12 @@ class Phone_Calls {
     }
 
     /**
-     * Accepts phone number string and returns formatted string or WP_Error ex. +48789123456
+     * Accepts phone number in any format and returns formatted or WP_Error.
      * 
-     * @param   $phone_number   string      Phone number string
-     * @param   $format     string|null     Optional. Can be 'add-spaces' or null.
-     * @return  string  ex. +48789123456
+     * @param string $phone_number  Phone number string in any format.
+     * @param string|null $format   Optional. Can be 'add-spaces' or null.
+     
+     * @return string String in E164 format (+48789123456) or (+48 789 123 456)
      */
 
     function format_phone_number($phone_number, $format = null) {

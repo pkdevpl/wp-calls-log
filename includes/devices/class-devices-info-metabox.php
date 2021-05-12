@@ -2,6 +2,10 @@
 
 namespace pkdevpl\wpcallslog;
 
+/**
+ * Creates metabox in admin for devices post type
+ */
+
 class Devices_Info_Metabox {
 
     function register_actions() {
@@ -35,6 +39,14 @@ class Devices_Info_Metabox {
         update_post_meta( $post_id, 'pkdevpl_device_api_key', $device_api_key );  
 
     }
+
+    /**
+     * Prints metabox HTML
+     * 
+     * HTML is located in includes/devices/templates/metabox-devices-info.php to separate template from logic.
+     * 
+     * @param WP_Post $post Post object containig data for edited post
+     */
     
     function print_metabox( $post ) { 
 
