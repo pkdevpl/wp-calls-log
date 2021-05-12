@@ -69,7 +69,7 @@ class Devices_Info_Metabox {
 
         wp_nonce_field( $nonce_action, $nonce_name );
 
-        require_once( PLUGIN_PATH . '/admin/metaboxes/devices-info.php');
+        require_once( PLUGIN_PATH . '/includes/devices/templates/metabox-devices-info.php');
         
     }
 
