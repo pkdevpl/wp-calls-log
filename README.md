@@ -32,8 +32,8 @@ You can disable `Phone ringing` profile to stop tracking your phone calls.
 
 ## Use cases
 
-You can use this plugin to make your Wordpress website recognise incoming phone calls and show saved customer/users data. It can be used to show recent customer orders or payment info without the need to manually search for customers in the database. It is also usefull to track stats on incoming phone calls.
+You can use this plugin to make your Wordpress website react to incoming phone call and immidiately show customer data on the screen, even before you answer. This eliminates the need to manually search for customers during phone calls. It is also usefull to track stats of customer contact.
 
 ## iOS
 
-Unfortunately iOS does not expose caller ID on incoming phone calls and makes it impossible for this plugin to detect, who is calling.
+Unfortunately iOS does not expose caller ID on incoming phone calls and makes it impossible for this plugin to detect who is calling.
