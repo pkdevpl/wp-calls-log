@@ -2,7 +2,11 @@
 
 ## About
 
-Wordpress plugin that registers incoming phone calls from Android phone device. It uses [Tasker app for android](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=pl&gl=US) and WP REST API.
+Wordpress plugin that allows you to show incoming phone calls from your Android device in the Wordpress admin panel. It generates XML files you can import into [Tasker App](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm&hl=pl&gl=US) on your phone.
+
+Tasker let's you detect events, like incoming phone calls or received text messages and perform a task. In this case it sends HTTP requests to your Wordpress site REST API, providing caller id and device api key.
+
+*Note: Tasker is not free (though it's ridiculously cheap compared to custom apps with the same functionality)*
 
 ## Installation
 
